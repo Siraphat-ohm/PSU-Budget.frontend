@@ -7,11 +7,12 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridRowsProp, GridRowModesModel, GridRowModes, GridColDef, GridToolbarContainer, GridActionsCellItem, GridEventListener, GridRowId, GridRowModel, GridRowEditStopReasons, DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, GridEventListener, GridRowId, GridRowModel, GridRowEditStopReasons, DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 
-type Props = {}
+interface Props {}
 
 interface EditToolbarProps {
   setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
@@ -30,18 +31,40 @@ function EditToolbar(props: EditToolbarProps) {
   );
 }
 
+interface IList {
+  id: number,
+  code: string,
+  name:string,
+  psu_code: string,
+  withdrawal_amount: string
+}
 
-const list = (props: Props) => {
+const List = (props: Props) => {
   const router = useRouter();
   const { status } = useSession();
-  const [ data, setData ] = useState();
+  const [ data, setData ] = useState<IList[]>();
   const axiosAuth = useAxiosAuth();
+  const [ open, setOpen ] = useState<boolean>(false);
+  const [ id, setId ] = useState<string | number>('');
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleDelete = async() => {
+    try {
+      await axiosAuth.delete(`/budget/${id}`)
+      setData( (prev : IList[] | undefined) => {
+        return prev?.filter( item => item.id != id);
+      })
+      handleClose();
+    } catch (error) {
+      console.log( error );
+    }
+  }
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'id', width: 180},
-    { field: 'itemcode', headerName: 'Itemcode', width: 180},
-    { field: 'item', headerName: 'รายการ', width: 600},
-    { field: 'psu_number', headerName: 'เลขที่ มอ.', width: 180},
-    { field: 'amount', 
+    { field: 'code', headerName: 'Itemcode', width: 180},
+    { field: 'name', headerName: 'รายการ', width: 600},
+    { field: 'psu_code', headerName: 'เลขที่ มอ.', width: 180},
+    { field: 'withdrawal_amount', 
       headerName: 'จำนวนเงินที่เบิกจ่าย', 
       width: 180,
       renderCell: ({ value }) => Number(value).toLocaleString(undefined, {
@@ -72,7 +95,10 @@ const list = (props: Props) => {
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
-            onClick={ () => {} }
+            onClick={ () => {
+              setId(id);
+              handleOpen();
+            } }
             color="inherit"
           />,
         ];
@@ -120,9 +146,36 @@ const list = (props: Props) => {
           }}
         />
       </Box>
+      <Dialog
+          open={open}
+          onClose={ () => handleClose()}
+      >
+        <DialogTitle > Confirm </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+                ต้องการลบรายการ
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+                onClick={() => handleClose()}
+                color='error'
+                variant='outlined'
+            >
+                ยกเลิก
+            </Button>
+            <Button 
+                onClick={() => handleDelete()} 
+                autoFocus
+                variant='outlined'
+                color='success'
+            >
+                ยืนยัน
+            </Button>
+          </DialogActions>
+      </Dialog>
     </Layout>
   )
 }
 
-
-export default list
+export default List;

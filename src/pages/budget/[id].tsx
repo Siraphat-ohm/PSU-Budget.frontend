@@ -15,18 +15,18 @@ interface Props {
     data: {
         id: string,
         fac: string,
-        itemcode: string,
-        item: string
-        psu_number: string,
-        dis_amount: string,
-        amount:string,
+        code: string,
+        name: string,
+        psu_code: string,
+        withdrawal_amount: string,
+        balance:string,
         date: Dayjs 
     }
 }
 
 interface IFormInput {
   code: string;
-  PSU_number: string;
+  psu_code: string;
   amount: string;
   date: Dayjs | null;
 }
@@ -35,21 +35,31 @@ const Edit = ({ data }: Props) => {
     
   const axiosAuth = useAxiosAuth();
   const router = useRouter();
+  const [ error, setError ] = useState<string>('');
   const { handleSubmit, control, formState: { errors, },  } = useForm<IFormInput>({
     defaultValues : {
-      code: data.itemcode,
-      PSU_number: data.psu_number,
-      amount: data.amount,
+      code: data.code,
+      psu_code: data.psu_code,
+      amount: data.withdrawal_amount,
       date: dayjs(data.date),
     }
-  })
+  });
   const [ open, setOpen ] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
-  const onSubmit: SubmitHandler<IFormInput> = async(value) => {
-    const res = await axiosAuth.put("/budget/disburse", { ...value, oldAmount: data.amount, id: router.query.id });
-    console.log(res.data);
+  const onSubmit: SubmitHandler<IFormInput> = async(values) => {
+    try {
+      const res = await axiosAuth.put("/budget/disburse", { id: router.query.id, ...values, oldAmount: data.withdrawal_amount, });
+      console.log(res);
+    } catch ( error : any ) {
+      setError(error.response.data.error);
+    }
   };
+
+  const handleSubmitDialog = () => {
+    handleSubmit(onSubmit)();
+    handleClose();
+  }
 
   return (
     <Layout>
@@ -63,38 +73,35 @@ const Edit = ({ data }: Props) => {
             />
           <ReadOnlyTextField
                                 label='itemcode' 
-                                text={data?.itemcode || ''} 
+                                text={data?.code || ''} 
                                 sx={{ width: 220 }}
           />
         </Box>
-
         <Box width={550} marginBottom="15px">
           <ReadOnlyTextField 
             label='รายการ' 
-            text={data?.item || ''} 
+            text={data?.name || ''} 
           />
         </Box>
-
         <Box marginBottom="15px" display="flex">
           <NumbericTextField 
             label='เงินคงเหลือ' 
-            value={ data.dis_amount || ''} 
+            value={ data.balance || ''} 
             readonly 
           />
           <Controller
-            name="PSU_number"
+            name="psu_code"
             control={control}
             rules={{ required: 'กรุณากรอกเลขที่ มอ.' }}
             render={({ field }) => <TextField 
                                       sx={{ width: "290px" }} 
                                       label="เลขที่ มอ."
-                                      error={!!errors.PSU_number}
-                                      helperText={errors.PSU_number?.message}
+                                      error={!!errors.psu_code}
+                                      helperText={errors.psu_code?.message}
                                       {...field} 
                                     />}
           />      
         </Box>
-        
         <Box marginBottom="15px">
           <Controller 
             name='amount'
@@ -121,11 +128,10 @@ const Edit = ({ data }: Props) => {
             }
           />          
         </Box>
-
         <Button 
-          type='submit'
           variant='contained'
           size='large'
+          onClick={() => handleOpen()}
         >
           บันทึก
         </Button>
@@ -133,37 +139,56 @@ const Edit = ({ data }: Props) => {
             open={open}
             onClose={handleClose}
         >
-            <DialogTitle >
-                Confirm
-            </DialogTitle>
+          <DialogTitle > Confirm </DialogTitle>
             <DialogContent>
-            <DialogContentText>
-                ต้องการแก้ไขข้อมูล
-            </DialogContentText>
+              <DialogContentText>
+                  ต้องการแก้ไขข้อมูล
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button 
-                onClick={handleClose}
-                color='error'
-                variant='outlined'
-            >
-                ยกเลิก
-            </Button>
-            <Button 
-                onClick={handleClose} 
-                autoFocus
-                variant='outlined'
-                color='success'
-            >
-                ยืนยัน
-            </Button>
+              <Button 
+                  onClick={handleClose}
+                  color='error'
+                  variant='outlined'
+              >
+                  ยกเลิก
+              </Button>
+              <Button 
+                  type='submit'
+                  onClick={() => handleSubmitDialog()} 
+                  autoFocus
+                  variant='outlined'
+                  color='success'
+              >
+                  ยืนยัน
+              </Button>
+            </DialogActions>
+        </Dialog>
+        <Dialog
+          open={!!error}
+        >
+          <DialogTitle color="red"> Error </DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {error}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button 
+                  type='submit'
+                  onClick={() => setError('')} 
+                  autoFocus
+                  variant='contained'
+                  color='error'
+              >
+                  ตกลง
+              </Button>
             </DialogActions>
         </Dialog>
       </form>
     </Layout>
   );
 };
-
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
     const { id } = context.query;
@@ -172,6 +197,5 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         props: { data: res.data }
     };
 };
-
 
 export default Edit;
