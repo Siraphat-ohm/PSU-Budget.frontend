@@ -73,7 +73,7 @@ const routes = {
     ADMIN: [
       { label: "เบิกจ่าย", link: "/budget/disburse/", icon: <AttachMoneyIcon/> },
       { label: "รายการ", link: "/budget/list", icon: <FormatListBulletedIcon/> },
-      { label: "Itemcode", link: "/budget/itemcode", icon: <AddIcon/> },
+      { label: "code", link: "/budget/code", icon: <AddIcon/> },
       { label: "รายงาน", link: "/budget/report", icon: <PrintIcon/> }
     ],
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {  Alert, AlertTitle, Autocomplete, Box, Button, Snackbar, TextField, Typography } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { serverFetch } from '@/lib/serverFetch';
@@ -38,7 +38,7 @@ interface ICode {
 
 const Disburse = ({ options }: Props) => {
   const axiosAuth = useAxiosAuth();
-  const { handleSubmit, control, formState: { errors, },  } = useForm<IFormInput>({
+  const { handleSubmit, control, formState: { errors, }, reset  } = useForm<IFormInput>({
     defaultValues : {
       psu_code: "",
       amount: "",
@@ -49,6 +49,7 @@ const Disburse = ({ options }: Props) => {
     try {
       await axiosAuth.post('/budget/disburse', data);
       setSuccess(true)
+      reset()
     } catch (error) {
       console.log(error);
       setAlert(true);
@@ -189,7 +190,7 @@ const Disburse = ({ options }: Props) => {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const res = await serverFetch(context, '/info/options');
+  const res = await serverFetch(context, '/info/options/disbursed');
 
   return {
     props: { options: res.data },
