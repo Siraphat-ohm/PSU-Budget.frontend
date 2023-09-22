@@ -9,10 +9,13 @@ interface Props {
 export async function serverFetch(context: GetServerSidePropsContext, endpoint: string): Promise<Props> {
   const session = await getSession(context);
   const token = session?.user?.accessToken;
+  console.log("Session:", session);
+  console.log("Token:", token);
 
-  
   if (!token) {
-    console.log(session);
+    // Handle the case when token is missing
+    console.log("Token is missing in session:", session);
+    throw new Error("Token is missing in session");
   }
 
   const headers = {
