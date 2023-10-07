@@ -55,6 +55,7 @@ const Disburse = ({ options }: Props) => {
       setAlert(true);
     }
   };
+
   const [ fac, setFac ] = useState<string | null>();
   const [ code, setCode ] = useState<ICode>();
   const [ success, setSuccess ] = useState<boolean>(false);

@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, GridEventListener, GridRowId, GridRowModel, GridRowEditStopReasons, DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
@@ -81,6 +81,7 @@ const List = (props: Props) => {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
+      align:"center",
       width: 100,
       cellClassName: 'actions',
       getActions: ({ id }) => {
@@ -141,9 +142,8 @@ const List = (props: Props) => {
           sx={{ height: 800 }}
           rows={data ?? []}
           columns={columns}
-          slots={{
-            toolbar: EditToolbar,
-          }}
+          showCellVerticalBorder
+          showColumnVerticalBorder
         />
       </Box>
       <Dialog
