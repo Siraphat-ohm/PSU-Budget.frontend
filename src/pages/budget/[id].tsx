@@ -36,7 +36,6 @@ const Edit = ({ data }: Props) => {
   const axiosAuth = useAxiosAuth();
   const router = useRouter();
   const [ error, setError ] = useState<string>('');
-  console.log(data.date);
   const { handleSubmit, control, formState: { errors, },  } = useForm<IFormInput>({
     defaultValues : {
       code: data.code,
@@ -52,7 +51,9 @@ const Edit = ({ data }: Props) => {
     values.date = dayjs(values.date).add(1, 'day')
     try {
       const res = await axiosAuth.put("/budget/disburse", { id: router.query.id, ...values, oldAmount: data.withdrawal_amount, });
-      console.log(res);
+      if ( res.status === 201 ){
+        router.replace('/budget/list')
+      }
     } catch ( error : any ) {
       setError(error.response.data.error);
     }
