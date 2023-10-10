@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {  Alert, AlertTitle, Autocomplete, Box, Button, Snackbar, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, TextField, Typography } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { serverFetch } from '@/lib/serverFetch';
 import { Layout } from '@/components/Layouts/Layout';
@@ -38,6 +38,9 @@ interface ICode {
 
 const Disburse = ({ options }: Props) => {
   const axiosAuth = useAxiosAuth();
+  const [fac, setFac] = useState<IFacOpt | null>(null);
+  const [code, setCode] = useState<ICode | null>(null);
+
   const { handleSubmit, control, formState: { errors, }, reset  } = useForm<IFormInput>({
     defaultValues : {
       psu_code: "",
@@ -45,21 +48,17 @@ const Disburse = ({ options }: Props) => {
       date: dayjs()
     }
   })
+
   const onSubmit: SubmitHandler<IFormInput> = async(data) => {
     try {
       await axiosAuth.post('/budget/disburse', data);
-      setSuccess(true)
+      setFac(null);
+      setCode(null);
       reset()
     } catch (error) {
       console.log(error);
-      setAlert(true);
     }
   };
-
-  const [ fac, setFac ] = useState<string | null>();
-  const [ code, setCode ] = useState<ICode>();
-  const [ success, setSuccess ] = useState<boolean>(false);
-  const [ alert, setAlert ] = useState<boolean>(false);
 
   return (
     <Layout>
@@ -75,9 +74,10 @@ const Disburse = ({ options }: Props) => {
                   return (
                     <Box sx={{ marginRight: "10px"}} width={320}>
                       <Autocomplete
+                        value={fac}
                         onChange={(event: any, newValue) => {
                             onChange(newValue ? newValue.id : null) 
-                            setFac(newValue?.id)
+                            setFac(newValue)
                           }}
                         options={options.fac_opt}
                         renderInput={ (params) => <TextField 
@@ -101,11 +101,12 @@ const Disburse = ({ options }: Props) => {
                   return (
                     <Box width={220}>
                       <Autocomplete
+                        value={code}
                         onChange={(event: any, newValue: any) => {
                             onChange(newValue ? newValue.label : null);
                             setCode(newValue);
                           }}
-                        options={ fac ? options.code_opt[fac] : [] }
+                        options={ fac ? options.code_opt[fac.id] : [] }
                         renderInput={ (params) => <TextField 
                                                     {...params} 
                                                     label= "เลือกItemcode" 
@@ -174,25 +175,12 @@ const Disburse = ({ options }: Props) => {
           เบิกจ่าย
         </Button>
       </form>
-      <Snackbar open={alert} autoHideDuration={2500} onClose={ () => setAlert(false)}>
-        <Alert severity="error">
-          <AlertTitle>Error</AlertTitle>
-          เบิกจ่ายไม่สำเร็จ
-        </Alert>
-      </Snackbar>
-      <Snackbar open={success} autoHideDuration={2500} onClose={ () => setSuccess(false) }>
-        <Alert severity="success">
-          <AlertTitle>Success</AlertTitle>
-          เบิกจ่ายสำเร็จ
-        </Alert>
-      </Snackbar>
     </Layout>
   );
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const res = await serverFetch(context, '/info/options/disbursed');
-
   return {
     props: { options: res.data },
   };
