@@ -9,6 +9,8 @@ import { NumbericTextField, NumericFormatCustom } from '@/components/NumbericTex
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { ReadOnlyTextField } from '@/components/ReadOnlyField';
+import toast, { Toaster } from 'react-hot-toast';
+import Textarea from "@mui/joy/Textarea";
 
 interface IFacOpt {
   label: string;
@@ -28,6 +30,7 @@ interface IFormInput {
   psu_code: string;
   amount: string;
   date: Dayjs | null;
+  note: string ;
 }
 
 interface ICode {
@@ -45,18 +48,20 @@ const Disburse = ({ options }: Props) => {
     defaultValues : {
       psu_code: "",
       amount: "",
-      date: dayjs()
+      date: dayjs(),
+      note: ""
     }
   })
 
   const onSubmit: SubmitHandler<IFormInput> = async(data) => {
     try {
-      await axiosAuth.post('/budget/disburse', data);
+      const res = await axiosAuth.post('/budget/disburse', data);
+      if ( res.status === 201 ) toast.success( "เบิกจ่ายสำเร็จ" );
       setFac(null);
       setCode(null);
       reset()
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast.error(error.response.data.error);
     }
   };
 
@@ -164,7 +169,25 @@ const Disburse = ({ options }: Props) => {
                                       onChange={(date) => field.onChange(date)}
                                     />
             }
-          />          
+          />
+        </Box>
+          
+        <Box marginBottom="15px">
+          <Controller
+            name='note'
+            control={control}
+            render={({ field }) => <Box width={550}>
+                                    <TextField
+                                        {...field}
+                                        minRows={2}
+                                        multiline
+                                        fullWidth
+                                        label='หมายเหตุ'
+                                        variant='outlined'
+                                    /> 
+                                  </Box>
+                                }
+          />
         </Box>
 
         <Button 
@@ -175,6 +198,9 @@ const Disburse = ({ options }: Props) => {
           เบิกจ่าย
         </Button>
       </form>
+      <Toaster
+        position='bottom-right' 
+      />
     </Layout>
   );
 };

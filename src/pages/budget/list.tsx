@@ -4,13 +4,13 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import toast, { Toaster } from "react-hot-toast"
 
 interface Props {}
 
@@ -21,22 +21,14 @@ interface EditToolbarProps {
   ) => void;
 }
 
-function EditToolbar(props: EditToolbarProps) {
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} >
-        Add record
-      </Button>
-    </GridToolbarContainer>
-  );
-}
-
 interface IList {
   id: number,
   code: string,
   name:string,
   psu_code: string,
-  withdrawal_amount: string
+  withdrawal_amount: string,
+  date: string,
+  note: string
 }
 
 const List = (props: Props) => {
@@ -55,15 +47,16 @@ const List = (props: Props) => {
         return prev?.filter( item => item.id != id);
       })
       handleClose();
-    } catch (error) {
+    } catch (error:any) {
       console.log( error );
+      toast.error( error.response.data.error );
     }
   }
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'id', width: 180},
+    { field: 'id', headerName: 'id', width: 70},
     { field: 'code', headerName: 'Itemcode', width: 180},
-    { field: 'name', headerName: 'รายการ', width: 600},
-    { field: 'psu_code', headerName: 'เลขที่ มอ.', width: 180},
+    { field: 'name', headerName: 'รายการ', width: 735},
+    { field: 'psu_code', headerName: 'เลขที่ มอ.', width: 170},
     { field: 'withdrawal_amount', 
       headerName: 'จำนวนเงินที่เบิกจ่าย', 
       width: 180,
@@ -74,8 +67,13 @@ const List = (props: Props) => {
     },
     { field: 'date', 
       headerName: 'วันที่', 
-      width: 180,
+      width: 120,
       renderCell: ({ value }) => dayjs(value).format('DD/MM/YYYY')
+    },
+    {
+      field: 'note',
+      headerName: 'หมายเหตุ',
+      width: 250
     },
     {
       field: 'actions',
@@ -174,6 +172,7 @@ const List = (props: Props) => {
             </Button>
           </DialogActions>
       </Dialog>
+      <Toaster/>
     </Layout>
   )
 }

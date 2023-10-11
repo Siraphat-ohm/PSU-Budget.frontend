@@ -6,6 +6,7 @@ import { Autocomplete, Box, Button, TextField, Typography, Alert, AlertTitle, Sn
 import { GetServerSidePropsContext } from 'next';
 import React, { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Props {
   data : {
@@ -28,7 +29,7 @@ const code = ( { data } : Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
-  const [ error, setError ] = useState<string>('');
+
   const [selectedFac, setSelectedFac] = useState<any | null>(null);
   const [selectedType, setSelectedType] = useState<any | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
@@ -44,13 +45,13 @@ const code = ( { data } : Props) => {
   const onSubmit: SubmitHandler<IFormInput> = async(data) => {
     try {
       const res = await axiosAuth.post('/budget/additemcode', data);
-      console.log(res.data);
+      if ( res.status === 201 ) toast.success( "เพิ่มItemcodeสำเร็จ" );
       setSelectedFac(null); 
       setSelectedType(null);
       setSelectedProduct(null);
       reset();
     } catch (error : any) {
-      setError(error.response.data.error);
+      toast.error(error.response.data.error);
     }
   };
 
@@ -200,56 +201,7 @@ const code = ( { data } : Props) => {
             สร้าง
         </Button>
       </form>
-      <Dialog
-          open={open}
-          onClose={handleClose}
-      >
-        <DialogTitle > Confirm </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-                ต้องการแก้ไขข้อมูล
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-                onClick={handleClose}
-                color='error'
-                variant='outlined'
-            >
-                ยกเลิก
-            </Button>
-            <Button 
-                type='submit'
-                onClick={() => handleSubmitDialog()} 
-                autoFocus
-                variant='outlined'
-                color='success'
-            >
-                ยืนยัน
-            </Button>
-          </DialogActions>
-      </Dialog>
-      <Dialog
-        open={!!error}
-      >
-        <DialogTitle color="red"> Error </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              {error}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-                type='submit'
-                onClick={() => setError('')} 
-                autoFocus
-                variant='contained'
-                color='error'
-            >
-                ตกลง
-            </Button>
-          </DialogActions>
-      </Dialog>
+      <Toaster/>
     </Layout>
   )
 }

@@ -16,7 +16,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import exceljs from "exceljs";
-import { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver';
+import toast, { Toaster } from "react-hot-toast";
 
 interface IFacOpt {
   label: string;
@@ -50,8 +51,9 @@ const report = ( { options }: Props ) => {
     try {
       const res = await axiosAuth.post('/report', data);
       setData(res.data);
-    } catch (error) {
-      
+     
+    } catch (error: any) {
+      toast.error( error.response.data.error );
     }
   };
   const createExcel = async() => {
@@ -157,7 +159,7 @@ const report = ( { options }: Props ) => {
             textAlign:"center",
             scrollBehavior:"smooth",
             overflowY: "auto",
-            width: "90%",
+            width: "100%",
             height: "700px" 
           }}
         >
@@ -184,12 +186,12 @@ const report = ( { options }: Props ) => {
                       <Table sx={{ border: '1px solid #000', marginTop:"10px", marginBottom:"20px"}} >
                         <TableHead>
                           <TableRow>
-                            <TableCell sx={{ border: '1px solid #000'}}  width={130}>วันที่เบิกจ่าย</TableCell>
-                            <TableCell sx={{ border: '1px solid #000'}}  width={130}>เลขที่ มอ.</TableCell>
-                            <TableCell sx={{ border: '1px solid #000'}} width={100}>itemcode</TableCell>
-                            <TableCell sx={{ border: '1px solid #000'}}  width={600}>ชื่อรายการ</TableCell>
-                            <TableCell sx={{ border: '1px solid #000'}}  width={150}>จำนวนเงินที่เบิกจ่าย</TableCell>
-                            <TableCell sx={{ border: '1px solid #000'}}  width={100}>ยอดเงินคงเหลือ</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>วันที่เบิกจ่าย</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>เลขที่ มอ.</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>itemcode</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>ชื่อรายการ</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>จำนวนเงินที่เบิกจ่าย</TableCell>
+                            <TableCell sx={{ border: '1px solid #000'}}>ยอดเงินคงเหลือ</TableCell>
                           </TableRow>
                         </TableHead>
                             <TableBody key={index}>
@@ -225,6 +227,7 @@ const report = ( { options }: Props ) => {
           }
         </Box>
       </Box>
+      <Toaster/>
     </Layout>
   )
 };

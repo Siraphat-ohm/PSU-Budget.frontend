@@ -20,7 +20,8 @@ interface Props {
         psu_code: string,
         withdrawal_amount: string,
         balance:string,
-        date: Dayjs 
+        date: Dayjs ,
+        note: string
     }
 }
 
@@ -29,6 +30,7 @@ interface IFormInput {
   psu_code: string;
   amount: string;
   date: Dayjs | null;
+  note: string;
 }
 
 const Edit = ({ data }: Props) => {
@@ -41,14 +43,14 @@ const Edit = ({ data }: Props) => {
       code: data.code,
       psu_code: data.psu_code,
       amount: data.withdrawal_amount,
-      date: dayjs(data.date),
+      date: dayjs(data.date).subtract(543, 'year'),
+      note: data.note
     }
   });
   const [ open, setOpen ] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
   const onSubmit: SubmitHandler<IFormInput> = async(values) => {
-    values.date = dayjs(values.date).add(1, 'day')
     try {
       const res = await axiosAuth.put("/budget/disburse", { id: router.query.id, ...values, oldAmount: data.withdrawal_amount, });
       if ( res.status === 201 ){
@@ -130,6 +132,23 @@ const Edit = ({ data }: Props) => {
                                     />
             }
           />          
+        </Box>
+        <Box marginBottom="15px">
+          <Controller
+            name='note'
+            control={control}
+            render={({ field }) => <Box width={550}>
+                                    <TextField
+                                        {...field}
+                                        minRows={2}
+                                        multiline
+                                        fullWidth
+                                        label='หมายเหตุ'
+                                        variant='outlined'
+                                    /> 
+                                  </Box>
+                                }
+          />
         </Box>
         <Button 
           variant='contained'
