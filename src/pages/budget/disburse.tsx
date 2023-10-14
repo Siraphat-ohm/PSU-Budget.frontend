@@ -5,10 +5,10 @@ import { serverFetch } from '@/lib/serverFetch';
 import { Layout } from '@/components/Layouts/Layout';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { NumbericTextField, NumericFormatCustom } from '@/components/NumbericTextField';
+import { NumbericTextField, NumericFormatCustom } from '@/components/Common/NumbericTextField';
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
-import { ReadOnlyTextField } from '@/components/ReadOnlyField';
+import { ReadOnlyTextField } from '@/components/Common/ReadOnlyField';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface IFacOpt {
@@ -60,7 +60,8 @@ const Disburse = ({ options }: Props) => {
       setCode(null);
       reset()
     } catch (error: any) {
-      toast.error(error.response.data.error);
+      const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
+      toast.error(errorMessage);
     }
   };
 

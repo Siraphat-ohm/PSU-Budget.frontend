@@ -14,13 +14,6 @@ import toast, { Toaster } from "react-hot-toast"
 
 interface Props {}
 
-interface EditToolbarProps {
-  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-  ) => void;
-}
-
 interface IList {
   id: number,
   code: string,
@@ -48,8 +41,8 @@ const List = (props: Props) => {
       })
       handleClose();
     } catch (error:any) {
-      console.log( error );
-      toast.error( error.response.data.error );
+      const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
+      toast.error( errorMessage );
     }
   }
   const columns: GridColDef[] = [

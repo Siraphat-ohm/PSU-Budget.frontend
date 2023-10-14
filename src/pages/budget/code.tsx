@@ -1,5 +1,5 @@
 import { Layout } from '@/components/Layouts/Layout'
-import { NumericFormatCustom } from '@/components/NumbericTextField';
+import { NumericFormatCustom } from '@/components/Common/NumbericTextField';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { serverFetch } from '@/lib/serverFetch';
 import { Autocomplete, Box, Button, TextField, Typography, Alert, AlertTitle, Snackbar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material'
@@ -26,10 +26,6 @@ interface IFormInput {
 }
 
 const code = ( { data } : Props) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const handleClose = () => setOpen(false);
-  const handleOpen = () => setOpen(true);
-
   const [selectedFac, setSelectedFac] = useState<any | null>(null);
   const [selectedType, setSelectedType] = useState<any | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
@@ -51,14 +47,10 @@ const code = ( { data } : Props) => {
       setSelectedProduct(null);
       reset();
     } catch (error : any) {
-      toast.error(error.response.data.error);
+      const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
+      toast.error(errorMessage);
     }
   };
-
-  const handleSubmitDialog = () => {
-    handleSubmit(onSubmit)();
-    handleClose();
-  }
 
   return (
     <Layout>
@@ -195,7 +187,6 @@ const code = ( { data } : Props) => {
         </Box>
         <Button
           variant='contained'
-          onClick={() => handleOpen()}
           sx={{ marginTop: "10px" }}
         >
             สร้าง

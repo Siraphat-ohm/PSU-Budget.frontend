@@ -5,10 +5,10 @@ import { serverFetch } from '@/lib/serverFetch';
 import { Layout } from '@/components/Layouts/Layout';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { NumbericTextField, NumericFormatCustom } from '@/components/NumbericTextField';
+import { NumbericTextField, NumericFormatCustom } from '@/components/Common/NumbericTextField';
 import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
-import { ReadOnlyTextField } from '@/components/ReadOnlyField';
+import { ReadOnlyTextField } from '@/components/Common/ReadOnlyField';
 import { useRouter } from 'next/router';
 
 interface Props {
@@ -57,7 +57,8 @@ const Edit = ({ data }: Props) => {
         router.replace('/budget/list')
       }
     } catch ( error : any ) {
-      setError(error.response.data.error);
+      const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
+      setError(errorMessage);
     }
   };
 
