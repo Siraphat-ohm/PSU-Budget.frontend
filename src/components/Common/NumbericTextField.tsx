@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NumericFormat, NumericFormatProps } from "react-number-format";
-import TextField, { TextFieldProps } from "@mui/material/TextField";
+import TextField from "@mui/material/TextField";
 
 interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void;
@@ -49,11 +49,14 @@ export const NumbericTextField = ( { readonly, label = "" , onChange, value }: N
           inputComponent: NumericFormatCustom as any,
           readOnly: readonly
         }}
+        disabled
         fullWidth
         sx={{
           width: 250,
-          marginRight: "10px"
-        }}
+          marginRight: "10px",
+          "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "#000000",
+        }}}
       />
   );
 }

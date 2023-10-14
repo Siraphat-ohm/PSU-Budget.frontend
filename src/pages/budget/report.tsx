@@ -1,24 +1,18 @@
 import { Layout } from '@/components/Layouts/Layout'
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth'
-import { Autocomplete, Box, FormControlLabel, IconButton, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import React, { useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form';
 import "dayjs/locale/th";
 import { serverFetch } from '@/lib/serverFetch'
 import { GetServerSidePropsContext } from 'next'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import exceljs from "exceljs";
 import { saveAs } from 'file-saver';
 import toast, { Toaster } from "react-hot-toast";
-import { IFacOpt, IFormInput, ITableRecD, ITableRecN, mode } from '@/models/report.mode'
+import { IFacOpt, IFormInput, mode } from '@/models/report.mode'
 import ReportForm from '@/components/Reports/ReportForm'
 import ReportData from '@/components/Reports/ReportData'
-import { displayNumber } from '../../../util/displayNumber'
 
 interface Props {
   options: IFacOpt[]
@@ -108,7 +102,6 @@ const report = ( { options }: Props ) => {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const res = await serverFetch(context, '/report/opt');
-  
   return {
     props: { options: res.data },
   };
