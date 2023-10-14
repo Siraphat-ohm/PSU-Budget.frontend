@@ -75,7 +75,7 @@ const Disburse = ({ options }: Props) => {
                 control={control}
                 rules={{ required: 'กรุณาเลือกคณะ' }}
                 render={({ field }) => {
-                  const { onChange, value, ref } = field;
+                  const { onChange } = field;
                   return (
                     <Box sx={{ marginRight: "10px"}} width={320}>
                       <Autocomplete
@@ -102,7 +102,7 @@ const Disburse = ({ options }: Props) => {
                 control={control}
                 rules={{ required: 'กรุณาเลือก Itemcode' }}
                 render={({ field }) => {
-                  const { onChange, value, ref } = field;
+                  const { onChange } = field;
                   return (
                     <Box width={220}>
                       <Autocomplete
@@ -199,7 +199,13 @@ const Disburse = ({ options }: Props) => {
         </Button>
       </form>
       <Toaster
-        position='bottom-right' 
+        position='top-right' 
+        toastOptions={{
+          style: {
+            fontSize: '20px',
+            marginTop: '50px'
+          }
+        }}
       />
     </Layout>
   );

@@ -165,7 +165,15 @@ const List = (props: Props) => {
             </Button>
           </DialogActions>
       </Dialog>
-      <Toaster/>
+      <Toaster
+        position='top-right' 
+        toastOptions={{
+          style: {
+            fontSize: '20px',
+            marginTop: '50px'
+          }
+        }}
+      />
     </Layout>
   )
 }

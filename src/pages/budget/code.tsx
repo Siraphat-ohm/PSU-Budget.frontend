@@ -192,7 +192,15 @@ const code = ( { data } : Props) => {
             สร้าง
         </Button>
       </form>
-      <Toaster/>
+      <Toaster
+        position='top-right' 
+        toastOptions={{
+          style: {
+            fontSize: '20px',
+            marginTop: '50px'
+          }
+        }}
+      />
     </Layout>
   )
 }

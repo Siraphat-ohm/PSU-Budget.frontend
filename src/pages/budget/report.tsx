@@ -93,7 +93,15 @@ const report = ( { options }: Props ) => {
           mode={mode}
         />
       </Box>
-      <Toaster/>
+      <Toaster
+        position='top-right' 
+        toastOptions={{
+        style: {
+          fontSize: '20px',
+          marginTop: '50px'
+        }
+        }}
+      />
     </Layout>
   )
 };
