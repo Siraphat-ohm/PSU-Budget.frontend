@@ -87,15 +87,14 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                     <Box key={index}>
                     <Typography variant='h5'>{facName}</Typography>
                     { fac[facName].map( (item:ITableRecD, index:number) => {
-                        const { code, name, records } = item;
-                        let { total_amount } = item;
-                        total_amount = +total_amount;
+                        const { code, name, records, total_amount } = item;
+                        let balance = +total_amount;
                         let sum = 0;
                         return (
                         <Box key={index}>
                             <Typography variant="h6">{code}</Typography>
                             <Typography variant="h6">{name}</Typography>
-                            <Typography variant="h6">เงินที่ได้รับ {displayNumber(total_amount)} บาท</Typography>
+                            <Typography variant="h6">เงินที่ได้รับ {displayNumber(balance)} บาท</Typography>
                             <Table sx={{ border: '1px solid #000', marginTop:"10px", marginBottom:"20px"}} >
                             <TableHead>
                                 <TableRow>
@@ -111,21 +110,21 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                                 const { date, psu_code, note } = record;
                                 let { withdrawal_amount } = record
                                 withdrawal_amount = +withdrawal_amount
-                                total_amount = +total_amount - +withdrawal_amount
+                                balance -= +withdrawal_amount
                                 sum += +withdrawal_amount
                                 return (
                                 <TableRow key={index}>
                                     <TableCell sx={{ border: '1px solid #000'}}>{date}</TableCell>
                                     <TableCell sx={{ border: '1px solid #000'}}>{psu_code}</TableCell>
                                     <TableCell sx={{ border: '1px solid #000'}}>{displayNumber(withdrawal_amount)}</TableCell>
-                                    <TableCell sx={{ border: '1px solid #000'}}>{displayNumber(total_amount)}</TableCell>
+                                    <TableCell sx={{ border: '1px solid #000'}}>{displayNumber(balance)}</TableCell>
                                     <TableCell sx={{ border: '1px solid #000'}}>{note}</TableCell>
                                 </TableRow>
                                 )})}
                                 <TableRow>
                                     <TableCell sx={{ border: '1px solid #000' }} colSpan={2}>ยอดเงินคงเหลือ</TableCell>
                                     <TableCell sx={{ border: '1px solid #000' }}>{displayNumber(sum)}</TableCell>
-                                    <TableCell sx={{ border: '1px solid #000' }}>{displayNumber(total_amount)} บาท</TableCell>
+                                    <TableCell sx={{ border: '1px solid #000' }}>{displayNumber(balance)} บาท</TableCell>
                                 </TableRow>
                             </TableBody>
                             </Table>

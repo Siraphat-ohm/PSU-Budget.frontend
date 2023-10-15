@@ -10,7 +10,7 @@ import { GetServerSidePropsContext } from 'next'
 import exceljs from "exceljs";
 import { saveAs } from 'file-saver';
 import toast, { Toaster } from "react-hot-toast";
-import { IFacOpt, IFormInput, mode } from '@/models/report.mode'
+import { IFacOpt, IFormInput, ITableRecD, ITableRecN, mode } from '@/models/report.mode'
 import ReportForm from '@/components/Reports/ReportForm'
 import ReportData from '@/components/Reports/ReportData'
 
@@ -42,17 +42,135 @@ const report = ( { options }: Props ) => {
   };
   const createExcel = async() => {
     try {
-      console.log(data);
       let wb = new exceljs.Workbook();
       let ws = wb.addWorksheet("report");
       if ( mode === "N" ){
+        ws.columns = [ 
+          { width: 50 }, 
+          { width: 17 }, 
+          { width: 17 }, 
+          { width: 50 }, 
+          { width: 20 }, 
+          { width: 15 }, 
+          { width: 25 }, 
+        ]
+        let start = 6;
+        data?.forEach( ( fac:any ) => {
+          const facName = Object.keys(fac)[0];
+          fac[facName].forEach( ( item: ITableRecN ) => {
+            const { plan, product, type, records, total_amount } = item;
+            let balance = +total_amount;
+            const length = records.length;
+            let sum = 0;
+            
+            ws.addRow( [ facName ] );
+            ws.addRow( [ plan ] );
+            ws.addRow( [ product ] );
+            ws.addRow( [ type ] );
+            ws.addRow( [ 'เงินที่ได้รับ', balance, 'บาท' ]  );
+            const rows = records.map( item => { 
+              const { code, date, name, note, psu_code, withdrawal_amount } = item;
+              balance -= +withdrawal_amount 
+              sum += +withdrawal_amount
+              return [ date, psu_code, code, name, +withdrawal_amount, balance, note ]
+            });
+            ws.addTable({
+              name: `${records[0].code}`,
+              ref: `A${start}`,
+              headerRow: true,
+              style: {
+                theme: 'TableStyleMedium18',
+                showRowStripes: true,
+              },
+              columns: [
+                { name: 'วันที่เบิกจ่าย' },
+                { name: 'เลขที่ มอ.'},
+                { name: 'itemcode' },
+                { name: 'ชื่อรายการ' },
+                { name: 'จำนวนเงินที่เบิกจ่าย' },
+                { name: 'คงเหลือ',  },
+                { name: 'หมายเหตุ',  }
+              ],
+              rows: [ ...rows, [ 'ยอดเงินคงเหลือ', '', '', '', sum, balance ]],
+            });
+            const stop = start + length;
+            ws.getCell(`B${start-1}`).style = { numFmt: "#,###.00" }
+            let i ;
+            for ( i = start + 1; i <= stop ; i++ ){
+              ws.getCell(`E${i}`).style = { numFmt: "#,###.00" }
+              ws.getCell(`F${i}`).style = { numFmt: "#,###.00" }
+            }
+            ws.getCell(`E${i}`).style = { numFmt: "#,###.00" }
+            ws.getCell(`F${i}`).style = { numFmt: "#,###.00" }
+            start += length + 8;
+            ws.addRow( [] );
+            });
+        } );
       } else if ( mode  === "D" ){
+        let start = 5
+        ws.columns = [ 
+          { width: 17 }, 
+          { width: 18 }, 
+          { width: 13 }, 
+          { width: 20 }, 
+          { width: 25 }, 
+        ]
+        data?.forEach( ( fac:any ) => {
+          const facName = Object.keys(fac)[0];
+          fac[facName].forEach( ( item: ITableRecD ) => {
+            const { code, name, total_amount, records } = item;
+            let balance = +total_amount;
+            let sum = 0;
+            const length = records.length;
+
+            ws.addRow( [ facName ] );
+            ws.addRow( [ code ] );
+            ws.addRow( [ name ] );
+            ws.addRow( [ 'เงินที่ได้รับ',  balance, 'บาท' ] );
+            const rows = records.map( item => {
+              const { date, note, psu_code, withdrawal_amount } = item;
+              balance -= +withdrawal_amount;
+              sum += +withdrawal_amount 
+              return [ date, psu_code, +withdrawal_amount, balance, note ]
+            });
+            ws.addTable({
+              name: `${records[0].psu_code}`,
+              ref: `A${start}`,
+              headerRow: true,
+              style: {
+                theme: 'TableStyleMedium18',
+                showRowStripes: true,
+              },
+              columns: [
+                { name: 'วันที่เบิกจ่าย' },
+                { name: 'เลขที่ มอ.'},
+                { name: 'จำนวนเงินที่เบิกจ่าย' },
+                { name: 'คงเหลือ',  },
+                { name: 'หมายเหตุ',  }
+              ],
+              rows: [ ...rows, [ 'ยอดเงินคงเหลือ', '', sum, balance ]],
+            });
+            const stop = start + length;
+            ws.getCell(`B${start-1}`).style = { numFmt: "#,###.00" }
+            let i ;
+            for ( i = start + 1; i <= stop ; i++ ){
+              ws.getCell(`D${i}`).style = { numFmt: "#,###.00" }
+              ws.getCell(`C${i}`).style = { numFmt: "#,###.00" }
+            }
+            ws.getCell(`C${i}`).style = { numFmt: "#,###.00" }
+            ws.getCell(`D${i}`).style = { numFmt: "#,###.00" }
+            start += length + 7;
+            ws.addRow( [] );
+          })
+        });
       }
+
       const buf = await wb.xlsx.writeBuffer();
-        
       saveAs(new Blob([buf]), 'report.xlsx')
-    } catch (error) {
-      toast.error( JSON.stringify(error) );
+    } catch (error:any) {
+      console.log(error);
+      const errorMessage = error.response?.data?.error || "ระบบเกิดข้อผิดพลาด" ;
+      toast.error(errorMessage);
     }
     
   }
