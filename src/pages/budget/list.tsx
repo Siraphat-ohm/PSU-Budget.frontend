@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography } from '@mui/material';
 import toast, { Toaster } from "react-hot-toast"
 
 interface Props {}
@@ -53,6 +53,7 @@ const List = (props: Props) => {
     { field: 'withdrawal_amount', 
       headerName: 'จำนวนเงินที่เบิกจ่าย', 
       width: 180,
+      align: "right",
       renderCell: ({ value }) => Number(value).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
@@ -129,12 +130,11 @@ const List = (props: Props) => {
           },
         }}
       >
+      <Typography variant="h2">รายการเบิกจ่าย</Typography>
         <DataGrid
           sx={{ height: 800 }}
           rows={data ?? []}
           columns={columns}
-          showCellVerticalBorder
-          showColumnVerticalBorder
         />
       </Box>
       <Dialog

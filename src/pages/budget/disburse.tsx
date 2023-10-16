@@ -48,7 +48,7 @@ const Disburse = ({ options }: Props) => {
       psu_code: "",
       amount: "",
       date: dayjs(),
-      note: ""
+      note: "-"
     }
   })
 

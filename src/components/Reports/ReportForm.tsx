@@ -20,7 +20,7 @@ interface ReportFormProps {
     setData: React.Dispatch<React.SetStateAction<any>>;
   }
 
-const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, mode, setMode, createExcel, options, onSubmit, setData }: ReportFormProps ) => {
+const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, createExcel, options, onSubmit, setData }: ReportFormProps ) => {
         return (
             <Box>
                 <form onSubmit={handleSubmit(handleSubmit(onSubmit))}>
@@ -114,12 +114,13 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, mode, set
                             name={name}
                             onChange={ (e) => {
                                 onChange(e.target.value);
-                                setMode( ( e.target.value ) as "N" | "D");
+                                setMode( ( e.target.value ) as mode );
                                 setData(null);
                             }}
                         >
                             <FormControlLabel value="N" control={<Radio />} label="เงินประจำปี" />
                             <FormControlLabel value="D" control={<Radio />} label="เงินกัน" />
+                            <FormControlLabel value="A" control={<Radio />} label="รายงานรวม" />
                         </RadioGroup>
                         )
                         }}
