@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Table, TableHead, TableRow, TableCell, TableBody, Typography } from '@mui/material';
-import { IRecordA, ITableRecD, ITableRecN, mode } from "@/models/report.mode";
-import dayjs from "dayjs";
-import { displayNumber } from "../../../util/displayNumber";
+import { IRecordA, IRecordB, ITableRecD, ITableRecN, mode } from "@/models/report.mode";
+import { displayNumber } from "../../util/displayNumber";
+import { displayDate } from "@/util/displayDay";
 
 interface ReportDataProps {
     mode: mode;
@@ -52,7 +52,7 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                                     sum += +withdrawal_amount
                                     return (
                                             <TableRow key={index}>
-                                                <TableCell sx={{ border: '1px solid #000' }}>{dayjs(date).format("DD/MM/YYYY")}</TableCell>
+                                                <TableCell sx={{ border: '1px solid #000' }}>{displayDate(date)}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{psu_code}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{code}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{name}</TableCell>
@@ -111,7 +111,7 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                                     sum += +withdrawal_amount
                                     return (
                                     <TableRow key={index}>
-                                        <TableCell sx={{ border: '1px solid #000'}}>{dayjs(date).format('DD/MM/YYYY')}</TableCell>
+                                        <TableCell sx={{ border: '1px solid #000'}}>{displayDate(date)}</TableCell>
                                         <TableCell sx={{ border: '1px solid #000'}}>{psu_code}</TableCell>
                                         <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(withdrawal_amount)}</TableCell>
                                         <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(balance)}</TableCell>
@@ -154,7 +154,7 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                         const { code, date, fac, name, product, psu_code, status, withdrawal_amount, plan, type } = item;
                         return ( 
                             <TableRow key={index}>
-                                <TableCell sx={{ border: '1px solid #000'}}>{dayjs(date).format("DD/MM/YYYY")}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{displayDate(date)}</TableCell>
                                 <TableCell sx={{ border: '1px solid #000'}}>{psu_code}</TableCell>
                                 <TableCell sx={{ border: '1px solid #000'}}>{code}</TableCell>
                                 <TableCell sx={{ border: '1px solid #000'}}>{name}</TableCell>
@@ -170,9 +170,46 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                 </TableBody>
                 </Table>
             </Box>
-
         )
-
+    } else if ( mode === "B" ) {
+        return (
+            <Box>
+                <Typography variant='h3'>รายงานเงินเหลือจ่าย</Typography>
+                <Table sx={{ border: '1px solid #000', marginTop:"10px", marginBottom:"20px"}} >
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{ border: '1px solid #000', width:"155px" }}>itemcode</TableCell>
+                        <TableCell sx={{ border: '1px solid #000'}}>ชื่อรายการ</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"180px" }}>คณะ</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"150px" }}>แผน</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"150px" }}>ผลผลิต/โครงการ</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"150px" }}>ประเภท</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"150px" }}>จำนวนเงินที่ได้รับ</TableCell>
+                        <TableCell sx={{ border: '1px solid #000', width:"150px" }}>ยอดเงินคงเหลือ</TableCell>
+                        <TableCell align="center" sx={{ border: '1px solid #000' }}>status</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    { !!data && data.map( ( item: IRecordB, index:number )  => {
+                        const { code, total_amount, fac, name, product, status, balance, plan, type } = item;
+                        return ( 
+                            <TableRow key={index}>
+                                <TableCell sx={{ border: '1px solid #000'}}>{code}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{name}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{fac}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{plan}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{product}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{type}</TableCell>
+                                <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(+total_amount)}</TableCell>
+                                <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(+balance)}</TableCell>
+                                <TableCell sx={{ border: '1px solid #000'}}>{status}</TableCell>
+                            </TableRow>
+                        ) 
+                    }) }
+                </TableBody>
+                </Table>
+            </Box>
+        )
     }
 }
 

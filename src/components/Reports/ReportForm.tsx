@@ -2,7 +2,7 @@ import { IFacOpt, mode } from "@/models/report.mode";
 import { Autocomplete, Box, Checkbox, FormControlLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import React from "react";
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import SearchIcon from '@mui/icons-material/Search';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
@@ -20,7 +20,7 @@ interface ReportFormProps {
     setData: React.Dispatch<React.SetStateAction<any>>;
   }
 
-const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, createExcel, options, onSubmit, setData }: ReportFormProps ) => {
+const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, mode, setMode, createExcel, options, onSubmit, setData }: ReportFormProps ) => {
         return (
             <Box>
                 <form onSubmit={handleSubmit(handleSubmit(onSubmit))}>
@@ -29,11 +29,11 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, 
                         name='startDate'
                         control={control}
                         render={({ field }) => <DatePicker
-                                                label='วันที่เริ่มต้น'
-                                                format='DD/MM/YYYY'
-                                                value={field.value}
-                                                onChange={(date) => field.onChange(date) }
-                                                disabled={begin}
+                                                    label='วันที่เริ่มต้น'
+                                                    format='DD/MM/YYYY'
+                                                    value={field.value}
+                                                    onChange={(date) => field.onChange(date) }
+                                                    disabled={begin || mode === "B"}
                                                 />
                         }
                     />
@@ -42,11 +42,11 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, 
                         name='endDate'
                         control={control}
                         render={({ field }) => <DatePicker
-                                                label='วันที่สุดท้าย'
-                                                format='DD/MM/YYYY'
-                                                value={field.value}
-                                                onChange={(date) => field.onChange(date) }
-                                                disabled={begin}
+                                                    label='วันที่สุดท้าย'
+                                                    format='DD/MM/YYYY'
+                                                    value={field.value}
+                                                    onChange={(date) => field.onChange(date) }
+                                                    disabled={begin || mode === "B"}
                                                 />
                         }
                     />
@@ -61,6 +61,7 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, 
                                 <Autocomplete
                                     onChange={(event: any, newValue) => onChange(newValue ? newValue.id : null) }
                                     options={ options }
+                                    defaultValue={ options[0] }
                                     renderInput={ (params) => <TextField 
                                                                 {...params} 
                                                                 label= "เลือกคณะ" 
@@ -92,6 +93,8 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, 
                                 <Checkbox 
                                 name={name}
                                 value={value}
+                                defaultChecked={true}
+                                disabled={ mode === "B" }
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     onChange(e.target.checked);
                                     setBegin(e.target.checked);
@@ -118,9 +121,10 @@ const ReportForm = ( { handleSubmit, control, errors, begin, setBegin, setMode, 
                                 setData(null);
                             }}
                         >
-                            <FormControlLabel value="N" control={<Radio />} label="เงินประจำปี" />
-                            <FormControlLabel value="D" control={<Radio />} label="เงินกัน" />
-                            <FormControlLabel value="A" control={<Radio />} label="รายงานรวม" />
+                            <FormControlLabel value="N" control={<Radio />} label="รายงานเงินประจำปี" />
+                            <FormControlLabel value="D" control={<Radio />} label="รายงานเงินกัน" />
+                            <FormControlLabel value="A" control={<Radio />} label="รายงานภาพรวม" />
+                            <FormControlLabel value="B" control={<Radio />} label="รายงานเงินเหลือจ่าย" />
                         </RadioGroup>
                         )
                         }}

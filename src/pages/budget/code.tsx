@@ -7,6 +7,7 @@ import { GetServerSidePropsContext } from 'next';
 import React, { useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast, { Toaster } from 'react-hot-toast';
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
 
 interface Props {
   data : {
@@ -29,6 +30,9 @@ const code = ( { data } : Props) => {
   const [selectedFac, setSelectedFac] = useState<any | null>(null);
   const [selectedType, setSelectedType] = useState<any | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
 
   const axiosAuth = useAxiosAuth();
   const { handleSubmit, control, formState: { errors, }, reset } = useForm<IFormInput>({
@@ -37,21 +41,26 @@ const code = ( { data } : Props) => {
       total_amount: '',
       name: ''
      }
-  })
-  const onSubmit: SubmitHandler<IFormInput> = async(data) => {
+  });
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
       const res = await axiosAuth.post('/budget/additemcode', data);
-      if ( res.status === 201 ) toast.success( "เพิ่มItemcodeสำเร็จ" );
+      if ( res.status === 201 ) toast.success('เพิ่มItemcodeสำเร็จ')
       setSelectedFac(null); 
       setSelectedType(null);
       setSelectedProduct(null);
       reset();
-    } catch (error : any) {
+    } catch (error: any) {
       const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
       toast.error(errorMessage);
     }
   };
 
+  const handleSubmitDialog = () => {
+    handleSubmit(onSubmit)();
+    handleClose();
+  }
   return (
     <Layout>
       <Typography variant='h2'>เพิ่มItemcode</Typography>
@@ -131,7 +140,7 @@ const code = ( { data } : Props) => {
               control={control}
               rules={ { required: 'กรุณาเลือกหมวดรายจ่าย'}}
               render={({ field }) => {
-                const { onChange, value, ref } = field;
+                const { onChange } = field;
                 return (
                   <Box sx={{ marginRight: "10px"}} width={175}>
                     <Autocomplete
@@ -154,14 +163,13 @@ const code = ( { data } : Props) => {
               }}
           />
         </Box>
-
         <Box>
          <Controller
             name='product'
             control={control}
             rules={ { required: 'กรุณาเลือกผลิตภัณฑ์'}}
             render={({ field }) => {
-              const { onChange, value, ref } = field;
+              const { onChange } = field;
               return (
                 <Box sx={{ marginRight: "10px"}} width={500}>
                   <Autocomplete
@@ -188,9 +196,19 @@ const code = ( { data } : Props) => {
         <Button
           variant='contained'
           sx={{ marginTop: "10px" }}
+          onClick={() => handleOpen()}
         >
-            สร้าง
+            เพิ่มItemcode
         </Button>
+
+        <ConfirmDialog
+          title='เพิ่มItemcode'
+          message='เมื่อเพิ่มItemcodeแล้วไม่สามารถแก้ไขได้'
+          onClose={handleClose}
+          onConfirm={handleSubmitDialog}
+          open={open}
+        />
+
       </form>
       <Toaster
         position='top-right' 

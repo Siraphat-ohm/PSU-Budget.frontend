@@ -21,7 +21,9 @@ export interface IFacOpt {
     id: string;
 }
   
-export type mode = "N" | "D" | "A"
+export type mode = "N" | "D" | "A" | "B"
+
+type status = "N" | "D" | "S"
   
 export interface IFormInput {
     startDate: Dayjs | null,
@@ -56,9 +58,21 @@ export interface IRecordA {
     withdrawal_amount: string,
     plan: string,
     type: string,
-    status: "N" | "D" | "S"
+    status: status
 }
   
+export interface IRecordB {
+    code: string,
+    name: string,
+    fac: string,
+    product: string,
+    total_amount: string
+    balance: string,
+    plan: string,
+    type: string,
+    status: status
+}
+
 export interface Props {
     options: IFacOpt[]
 }

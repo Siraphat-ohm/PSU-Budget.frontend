@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {  Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Typography } from '@mui/material';
+import {  Box, Button, TextField, Typography } from '@mui/material';
 import { GetServerSidePropsContext } from 'next';
 import { serverFetch } from '@/lib/serverFetch';
 import { Layout } from '@/components/Layouts/Layout';
@@ -10,6 +10,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { ReadOnlyTextField } from '@/components/Common/ReadOnlyField';
 import { useRouter } from 'next/router';
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface Props {
     data: {
@@ -57,8 +59,9 @@ const Edit = ({ data }: Props) => {
         router.replace('/budget/list')
       }
     } catch ( error : any ) {
+      console.log('error');
       const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
-      setError(errorMessage);
+      toast.error(errorMessage)
     }
   };
 
@@ -158,57 +161,23 @@ const Edit = ({ data }: Props) => {
         >
           บันทึก
         </Button>
-        <Dialog
-            open={open}
-            onClose={handleClose}
-        >
-          <DialogTitle > Confirm </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                  ต้องการแก้ไขข้อมูล
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button 
-                  onClick={handleClose}
-                  color='error'
-                  variant='outlined'
-              >
-                  ยกเลิก
-              </Button>
-              <Button 
-                  type='submit'
-                  onClick={() => handleSubmitDialog()} 
-                  autoFocus
-                  variant='outlined'
-                  color='success'
-              >
-                  ยืนยัน
-              </Button>
-            </DialogActions>
-        </Dialog>
-        <Dialog
-          open={!!error}
-        >
-          <DialogTitle color="red"> Error </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                {error}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button 
-                  type='submit'
-                  onClick={() => setError('')} 
-                  autoFocus
-                  variant='contained'
-                  color='error'
-              >
-                  ตกลง
-              </Button>
-            </DialogActions>
-        </Dialog>
+        <ConfirmDialog
+          title='ต้องการแก้ไขข้อมูล'
+          message=''
+          onClose={handleClose}
+          onConfirm={handleSubmitDialog}
+          open={open}
+        />
       </form>
+      <Toaster
+        position='top-right' 
+        toastOptions={{
+          style: {
+            fontSize: '20px',
+            marginTop: '50px'
+          }
+        }}      
+      />
     </Layout>
   );
 };

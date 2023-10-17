@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography } from '@mui/material';
 import toast, { Toaster } from "react-hot-toast"
+import ConfirmDialog from '@/components/Common/ConfirmDialog';
 
 interface Props {}
 
@@ -40,6 +41,7 @@ const List = (props: Props) => {
         return prev?.filter( item => item.id != id);
       })
       handleClose();
+      toast.success('ลบItemcodeสำเร็จ')
     } catch (error:any) {
       const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
       toast.error( errorMessage );
@@ -137,34 +139,13 @@ const List = (props: Props) => {
           columns={columns}
         />
       </Box>
-      <Dialog
-          open={open}
-          onClose={ () => handleClose()}
-      >
-        <DialogTitle > Confirm </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-                ต้องการลบรายการ
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-                onClick={() => handleClose()}
-                color='error'
-                variant='outlined'
-            >
-                ยกเลิก
-            </Button>
-            <Button 
-                onClick={() => handleDelete()} 
-                autoFocus
-                variant='outlined'
-                color='success'
-            >
-                ยืนยัน
-            </Button>
-          </DialogActions>
-      </Dialog>
+      <ConfirmDialog
+        title='ต้องการลบItemcode'
+        message='เมื่อลบItemcodeแล้วไม่สามารถย้อนกลับได้' 
+        onClose={handleClose}
+        onConfirm={handleDelete}
+        open={open}
+      />
       <Toaster
         position='top-right' 
         toastOptions={{
