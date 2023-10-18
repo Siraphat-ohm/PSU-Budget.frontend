@@ -10,8 +10,8 @@ import { GetServerSidePropsContext } from 'next'
 import toast, { Toaster } from "react-hot-toast";
 import { IFacOpt, IFormInput, mode } from '@/models/report.mode'
 import ReportForm from '@/components/Reports/ReportForm'
-import ReportData from '@/components/Reports/ReportData'
 import { excelUtils } from '@/util/excelUtils'
+import { ReportData } from '@/components/Reports/ReportData'
 
 interface Props {
   options: IFacOpt[]
@@ -28,7 +28,8 @@ const report = ( { options }: Props ) => {
       endDate: dayjs(),
       mode: 'N',
       fac: options[0].id,
-      begin: true
+      begin: true,
+      status: "N"
     }
   });
   const onSubmit: SubmitHandler<IFormInput> = async(data) => { 

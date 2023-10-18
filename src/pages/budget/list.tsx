@@ -3,13 +3,12 @@ import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { GridRowsProp, GridRowModesModel, GridColDef, GridToolbarContainer, GridActionsCellItem, DataGrid } from '@mui/x-data-grid';
+import { GridColDef, GridActionsCellItem, DataGrid } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import toast, { Toaster } from "react-hot-toast"
 import ConfirmDialog from '@/components/Common/ConfirmDialog';
 
@@ -102,8 +101,13 @@ const List = (props: Props) => {
   ];
   useEffect(() => {
     const fetchData = async() => {
-      const res = await axiosAuth.get('/info/items-disbursed');
-      setData(res.data);
+      try {
+        const res = await axiosAuth.get('/info/items-disbursed');
+        setData(res.data);
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || 'ระบบเกิดข้อผิดพลาด';
+        toast.error( errorMessage );
+      }
     }
     if (status === 'authenticated'){
       fetchData();

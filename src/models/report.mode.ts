@@ -30,7 +30,8 @@ export interface IFormInput {
     endDate: Dayjs | null,
     fac: string,
     begin: boolean,
-    mode: mode
+    mode: mode,
+    status? : status
 }
   
 export interface ITableRecD {

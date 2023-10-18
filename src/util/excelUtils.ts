@@ -36,7 +36,9 @@ export const excelUtils = async( mode: mode, data:any[]) => {
             const rows = records.map( item => { 
               const { code, date, name, note, psu_code, withdrawal_amount } = item;
               balance -= +withdrawal_amount 
+              balance = Number(balance.toFixed(2));
               sum += +withdrawal_amount
+              sum = Number(sum.toFixed(2));
               return [ displayDate(date), psu_code, code, name, +withdrawal_amount, balance, note ]
             });
             ws.addTable({
@@ -87,7 +89,9 @@ export const excelUtils = async( mode: mode, data:any[]) => {
             const rows = records.map( item => {
               const { date, note, psu_code, withdrawal_amount } = item;
               balance -= +withdrawal_amount;
+              balance = Number(balance.toFixed(2));
               sum += +withdrawal_amount 
+              sum = Number(sum.toFixed(2));
               return [ displayDate(date), psu_code, +withdrawal_amount, balance, note ]
             });
             const length = rows.length;

@@ -9,7 +9,7 @@ interface ReportDataProps {
     data: any[];
 }
 
-const ReportData = ( { mode, data }: ReportDataProps ) => {
+export const ReportData = ( { mode, data }: ReportDataProps ) => {
     if ( mode === "N" ){
         return (
             <Box>
@@ -21,11 +21,10 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                 <Box key={index}>
                     <Typography variant='h5'>{facName}</Typography>
                     { fac[facName].map( ( item:ITableRecN, index:number ) => {
-                        const { plan, product, type, records } = item;
-                        let { total_amount } = item;
+                        const { plan, product, type, records, total_amount } = item;
+                        let balance = +total_amount
                         let sum = 0;
-                        total_amount = Number(total_amount)
-                        let totalAmountDisplay = displayNumber(total_amount);
+                        let totalAmountDisplay = displayNumber(balance);
                         return (
                         <Box key={index}>
                             <Typography variant="h6">{plan}</Typography>
@@ -45,26 +44,26 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                             </TableHead>
                                 <TableBody key={index}>
                                 { records.map( (record, index:number) => {
-                                    const { code, name, date, psu_code, note } = record;
-                                    let { withdrawal_amount } = record;
-                                    withdrawal_amount = +withdrawal_amount
-                                    total_amount = +total_amount - +withdrawal_amount
+                                    const { code, name, date, psu_code, note, withdrawal_amount } = record;
+                                    balance -= +withdrawal_amount
+                                    balance = Number(balance.toFixed(2));
                                     sum += +withdrawal_amount
+                                    sum = Number(sum.toFixed(2));
                                     return (
                                             <TableRow key={index}>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{displayDate(date)}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{psu_code}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{code}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{name}</TableCell>
-                                                <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(withdrawal_amount)}</TableCell>
-                                                <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(total_amount)}</TableCell>
+                                                <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(+withdrawal_amount)}</TableCell>
+                                                <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(balance)}</TableCell>
                                                 <TableCell sx={{ border: '1px solid #000' }}>{note}</TableCell>
                                             </TableRow>
                                     )})}
                                     <TableRow>
                                     <TableCell sx={{ border: '1px solid #000' }} colSpan={4}>ยอดเงินคงเหลือ</TableCell>
                                     <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(sum)}</TableCell>
-                                    <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(total_amount)}</TableCell>
+                                    <TableCell align="right" sx={{ border: '1px solid #000' }}>{displayNumber(balance)}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -104,16 +103,16 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                                 </TableHead>
                                 <TableBody>
                                 { records.map(  ( record, index:number )  => {
-                                    const { date, psu_code, note } = record;
-                                    let { withdrawal_amount } = record
-                                    withdrawal_amount = +withdrawal_amount
+                                    const { date, psu_code, note, withdrawal_amount } = record;
                                     balance -= +withdrawal_amount
+                                    balance = Number(balance.toFixed(2));
                                     sum += +withdrawal_amount
+                                    sum = Number(sum.toFixed(2));
                                     return (
                                     <TableRow key={index}>
                                         <TableCell sx={{ border: '1px solid #000'}}>{displayDate(date)}</TableCell>
                                         <TableCell sx={{ border: '1px solid #000'}}>{psu_code}</TableCell>
-                                        <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(withdrawal_amount)}</TableCell>
+                                        <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(+withdrawal_amount)}</TableCell>
                                         <TableCell align="right" sx={{ border: '1px solid #000'}}>{displayNumber(balance)}</TableCell>
                                         <TableCell sx={{ border: '1px solid #000'}}>{note}</TableCell>
                                     </TableRow>
@@ -171,7 +170,7 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
                 </Table>
             </Box>
         )
-    } else if ( mode === "B" ) {
+    } else {
         return (
             <Box>
                 <Typography variant='h3'>รายงานเงินเหลือจ่าย</Typography>
@@ -212,5 +211,3 @@ const ReportData = ( { mode, data }: ReportDataProps ) => {
         )
     }
 }
-
-export default ReportData;
