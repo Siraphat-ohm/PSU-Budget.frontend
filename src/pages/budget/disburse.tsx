@@ -83,6 +83,7 @@ const Disburse = ({ options }: Props) => {
                         onChange={(event: any, newValue) => {
                             onChange(newValue ? newValue.id : null) 
                             setFac(newValue)
+                            setCode(null)
                           }}
                         options={options.fac_opt}
                         renderInput={ (params) => <TextField 
