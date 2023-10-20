@@ -24,7 +24,7 @@ interface IList {
   note: string
 }
 
-const List = (props: Props) => {
+const list = (props: Props) => {
   const router = useRouter();
   const { status } = useSession();
   const [ data, setData ] = useState<IList[]>();
@@ -163,4 +163,4 @@ const List = (props: Props) => {
   )
 }
 
-export default List;
+export default list;

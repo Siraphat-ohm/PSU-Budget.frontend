@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "production" : "next build && next start"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -17,7 +18,6 @@
     "@mui/x-data-grid": "^6.10.2",
     "@mui/x-date-pickers": "^6.16.0",
     "@reduxjs/toolkit": "^1.9.5",
-    "@tarzui/date-fns-be": "^1.0.10",
     "@types/node": "18.15.13",
     "@types/react": "^18.2.24",
     "@types/react-dom": "18.0.11",

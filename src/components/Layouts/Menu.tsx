@@ -73,13 +73,11 @@ const routes = {
     ADMIN: [
       { label: "เบิกจ่าย", link: "/budget/disburse/", icon: <AttachMoneyIcon/> },
       { label: "รายการ", link: "/budget/list", icon: <FormatListBulletedIcon/> },
-      { label: "code", link: "/budget/code", icon: <AddIcon/> },
+      { label: "เพิ่มItemcode", link: "/budget/code", icon: <AddIcon/> },
       { label: "รายงาน", link: "/budget/report", icon: <PrintIcon/> }
     ],
 
   }
-
-
 
 const Menu = ( { open, onDrawerClose }: MenuProps ) => {
   const router = useRouter();
@@ -120,4 +118,4 @@ const Menu = ( { open, onDrawerClose }: MenuProps ) => {
   )
 }
 
-export default Menu
+export default Menu;

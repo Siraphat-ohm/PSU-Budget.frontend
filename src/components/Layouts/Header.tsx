@@ -60,7 +60,7 @@ const Header = ( {open, onDrawerOpen, user }: HeaderProps) => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            PSU-Budget
+            PSU-Budget {process.env.VERSION}
           </Typography>
           <Box sx={{ flexGrow: 1 }}/>
           <Typography variant="h6" noWrap component="div">{user?.firstname} {user?.lastname}</Typography>

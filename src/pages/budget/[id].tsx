@@ -35,7 +35,7 @@ interface IFormInput {
   note: string;
 }
 
-const Edit = ({ data }: Props) => {
+const edit = ({ data }: Props) => {
     
   const axiosAuth = useAxiosAuth();
   const router = useRouter();
@@ -190,4 +190,4 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     };
 };
 
-export default Edit;
+export default edit;

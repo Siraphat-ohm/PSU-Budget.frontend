@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { axiosAuth } from "../axios";
 
 const useAxiosAuth = () => {
-    const { data:session, status } = useSession();
+    const { data:session } = useSession();
 
     useEffect( () => {
         const requestIntercept = axiosAuth.interceptors.request.use((config) => {

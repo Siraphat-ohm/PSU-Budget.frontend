@@ -38,7 +38,7 @@ interface ICode {
   label: string;
 }
 
-const Disburse = ({ options }: Props) => {
+const disburse = ({ options }: Props) => {
   const axiosAuth = useAxiosAuth();
   const [fac, setFac] = useState<IFacOpt | null>(null);
   const [code, setCode] = useState<ICode | null>(null);
@@ -219,4 +219,4 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   };
 };
 
-export default Disburse;
+export default disburse;
